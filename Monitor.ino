@@ -1,9 +1,11 @@
+// Default Libs
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "CircularBuffer.h"
 
+// Custom Libs
 #include <MenuItem.h>
+#include "CircularBuffer.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -35,9 +37,6 @@ void displaySettings() {
 
   // BaudRate
   display.print(menuBaudRate.getText());
-  // display.print("BR:");
-  // display.print(baudRate);
-  // display.print(" ");
 
   // Mode
   switch (mode) {
@@ -89,7 +88,7 @@ void setup() {
   Serial.begin(baudRate);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println("screen allocation failed");
+    Serial.println("OLED init failed");
     while (true)
       ;
   }
