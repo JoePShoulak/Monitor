@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "CircularBuffer.h"
 
 #define SCREEN_WIDTH 128     // OLED display width, in pixels
 #define SCREEN_HEIGHT 64     // OLED display height, in pixels
@@ -16,6 +17,7 @@ enum Mode {
 
 int baudRate = 9600;
 Mode mode = monitor;
+CircularBuffer<const char*, 7> options;
 
 void displaySettings() {
   display.setCursor(0, 0);
@@ -45,17 +47,45 @@ void displaySettings() {
 }
 
 void update(String message = "") {
+  //Check if user moved the cursor?
+  //You can move it up or down with options.up() and options.down() respectively.
+
   display.clearDisplay();
 
   displaySettings();
 
+
+  //Print all options again
   display.setCursor(0, 10);
+  for (int i = 0; i < options.length; ++i) {
+    if (i == options.index()) {
+      //Maybe append something? Or change how this line displays?
+    }
+    display.println(options[i]);
+  }
+
+  //Alternatively, you could print the options, then set cursor, and print some line or something
+  display.setCursor(0, 10);
+  for (auto option : options) {
+    display.println(option);
+  }
+  display.setCursor(0, 10 * options.index()); //assuming rows are 10 px?
+  display.print(">");
+
   display.println(message);
 
   display.display();
 }
 
 void setup() {
+  options.append("1");
+  options.append("2");
+  options.append("3");
+  options.append("4");
+  options.append("5");
+  options.append("6");
+  options.append("7");
+
   Serial.begin(baudRate);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -63,7 +93,7 @@ void setup() {
     while (true)
       ;
   }
-  
+
   display.clearDisplay();
   display.display();
 
@@ -72,13 +102,12 @@ void setup() {
 
   update();
   display.setCursor(0, 10);
-  display.println("1");
-  display.println("2");
-  display.println("3");
-  display.println("4");
-  display.println("5");
-  display.println("6");
-  display.println("7");
+  for (int i = 0; i < options.length; ++i) {
+    if (i == options.index()) {
+      //Maybe append something? Or change how this line displays?
+    }
+    display.println(options[i]);
+  }
   display.display();
 }
 
