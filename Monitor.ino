@@ -21,7 +21,7 @@ void displaySettings() {
   display.setCursor(0, 0);
 
   // BaudRate
-  display.print("BR ");
+  display.print("BR:");
   display.print(baudRate);
   display.print(" ");
 
@@ -41,7 +41,7 @@ void displaySettings() {
       break;
   }
 
-  display.drawLine(0, 8, SCREEN_WIDTH, 8, SSD1306_WHITE);
+  display.drawFastHLine(0, 8, SCREEN_WIDTH, SSD1306_WHITE);
 }
 
 void update(String message = "") {
