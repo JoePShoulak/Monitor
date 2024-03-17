@@ -46,7 +46,7 @@ void displaySettings() {
   display.drawLine(0, 8, SCREEN_WIDTH, 8, SSD1306_WHITE);
 }
 
-void update(String message = "") {
+void update() {
   //Check if user moved the cursor?
   //You can move it up or down with options.up() and options.down() respectively.
 
@@ -71,8 +71,6 @@ void update(String message = "") {
   }
   display.setCursor(0, 10 * options.index()); //assuming rows are 10 px?
   display.print(">");
-
-  display.println(message);
 
   display.display();
 }
