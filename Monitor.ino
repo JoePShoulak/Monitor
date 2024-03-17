@@ -93,9 +93,6 @@ void setup() {
       ;
   }
 
-  display.clearDisplay();
-  display.display();
-
   display.setTextColor(SSD1306_WHITE);
 
   // menuBaudRate.cycle();
