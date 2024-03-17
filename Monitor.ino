@@ -25,9 +25,7 @@ enum Mode {
 
 int baudRate = DEFAULT_BAUDRATE;
 Mode mode = DEFAULT_MODE;
-CircularBuffer<const char*, 7> options;
-String data[6];
-int writeIndex = 0;
+CircularBuffer<String, 7> messages;
 
 long baudRateOptions[] = { 9600, 115200 };
 MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
@@ -61,69 +59,31 @@ void displaySettings() {
 }
 
 void addData(String datum) {
-  datum.trim();
-
-  if (writeIndex < 6) {
-    data[writeIndex++] = datum;
-    return;
-  }
-
-  for (int i = 0; i < 6; i++) {
-    data[i] = data[i + 1];
-  }
-
-  data[5] = datum;
+  messages.append(datum.trim());
 }
 
 void displayData() {
   display.setCursor(0, 12);
 
-  for (int i = 0; i < 6; i++)
-    display.println(data[i]);
+  for (auto& msg : messages) {
+    display.println(msg);
+  }
 }
 
 void update() {
-  //Check if user moved the cursor?
-  //You can move it up or down with options.up() and options.down() respectively.
-
   display.clearDisplay();
 
   displaySettings();
   displayData();
 
-  //Print all options again
-  display.setCursor(0, 10);
-  for (int i = 0; i < options.length; ++i) {
-    if (i == options.index()) {
-      //Maybe append something? Or change how this line displays?
-    }
-    display.println(options[i]);
-  }
-
-  //Alternatively, you could print the options, then set cursor, and print some line or something
-  display.setCursor(0, 10);
-  for (auto option : options) {
-    display.println(option);
-  }
-  display.setCursor(0, 10 * options.index()); //assuming rows are 10 px?
-  display.print(">");
+  display.display();
 }
 
 void setup() {
-
-  options.append("1");
-  options.append("2");
-  options.append("3");
-  options.append("4");
-  options.append("5");
-  options.append("6");
-  options.append("7");
-
   // Button test, pay no mind
   pinMode(BUTTON1_PIN, INPUT);
   pinMode(BUTTON2_PIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-
 
   Serial.begin(baudRate);
 
