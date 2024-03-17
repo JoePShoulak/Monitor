@@ -2,11 +2,17 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#define SCREEN_WIDTH 128     // OLED display width, in pixels
-#define SCREEN_HEIGHT 64     // OLED display height, in pixels
-#define OLED_RESET -1        // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3C  ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define SCREEN_RESET -1
+#define SCREEN_ADDRESS 0x3C
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
+
+#define DEFAULT_BAUDRATE 9600
+#define DEFAULT_MODE monitor
+
+#define BUTTON1_PIN 11
+#define BUTTON2_PIN 12
 
 enum Mode {
   monitor,
@@ -14,8 +20,10 @@ enum Mode {
   recieve
 };
 
-int baudRate = 9600;
-Mode mode = monitor;
+int baudRate = DEFAULT_BAUDRATE;
+Mode mode = DEFAULT_MODE;
+String data[6];
+int writeIndex = 0;
 
 void displaySettings() {
   display.setCursor(0, 0);
@@ -41,48 +49,68 @@ void displaySettings() {
       break;
   }
 
-  display.drawFastHLine(0, 8, SCREEN_WIDTH, SSD1306_WHITE);
+  display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
+}
+void addData(String datum) {
+  datum.trim();
+
+  if (writeIndex < 6) {
+    data[writeIndex++] = datum;
+    return;
+  }
+
+  for (int i = 0; i < 6; i++) {
+    data[i] = data[i + 1];
+  }
+
+  data[5] = datum;
 }
 
-void update(String message = "") {
+void displayData() {
+  display.setCursor(0, 12);
+
+  for (int i = 0; i < 6; i++)
+    display.println(data[i]);
+}
+
+void update() {
   display.clearDisplay();
 
   displaySettings();
-
-  display.setCursor(0, 10);
-  display.println(message);
+  displayData();
 
   display.display();
 }
 
 void setup() {
+  pinMode(BUTTON1_PIN, INPUT);
+  pinMode(BUTTON2_PIN, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+
   Serial.begin(baudRate);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println("SSD1306 allocation failed");
+    Serial.println("screen allocation failed");
     while (true)
       ;
   }
-  
+
   display.clearDisplay();
   display.display();
 
-  display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
 
   update();
-  display.setCursor(0, 10);
-  display.println("1");
-  display.println("2");
-  display.println("3");
-  display.println("4");
-  display.println("5");
-  display.println("6");
-  display.println("7");
-  display.display();
 }
 
 void loop() {
-  if (Serial.available())
-    update(Serial.readString());
+  if (Serial.available()) {
+    addData(Serial.readString());
+    update();
+  }
+
+  // Button test, pay no mind
+  bool b1 = digitalRead(BUTTON1_PIN);
+  bool b2 = digitalRead(BUTTON2_PIN);
+  digitalWrite(LED_BUILTIN, b1 ^ b2);
 }
