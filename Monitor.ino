@@ -36,21 +36,22 @@ void displaySettings() {
   // Mode
   switch (mode) {
     case monitor:
-      display.print("MON");
+      display.print("MON ");
       break;
     case transmit:
-      display.print("TX");
+      display.print("TX  ");
       break;
     case recieve:
-      display.print("RX");
+      display.print("RX  ");
       break;
     default:
-      display.print("ERR");
+      display.print("ERR ");
       break;
   }
 
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
 }
+
 void addData(String datum) {
   datum.trim();
 
@@ -83,6 +84,7 @@ void update() {
 }
 
 void setup() {
+  // Button test, pay no mind
   pinMode(BUTTON1_PIN, INPUT);
   pinMode(BUTTON2_PIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
