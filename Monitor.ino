@@ -2,6 +2,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#include <MenuItem.h>
+
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define SCREEN_RESET -1
@@ -25,13 +27,17 @@ Mode mode = DEFAULT_MODE;
 String data[6];
 int writeIndex = 0;
 
+long baudRateOptions[] = { 9600, 115200 };
+MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
+
 void displaySettings() {
   display.setCursor(0, 0);
 
   // BaudRate
-  display.print("BR:");
-  display.print(baudRate);
-  display.print(" ");
+  display.print(menuBaudRate.getText());
+  // display.print("BR:");
+  // display.print(baudRate);
+  // display.print(" ");
 
   // Mode
   switch (mode) {
@@ -102,6 +108,8 @@ void setup() {
 
   display.setTextColor(SSD1306_WHITE);
 
+  // menuBaudRate.cycle();
+  // menuBaudRate.cycle();
   update();
 }
 
