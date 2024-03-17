@@ -59,7 +59,8 @@ void displaySettings() {
 }
 
 void addData(String datum) {
-  messages.append(datum.trim());
+  datum.trim();
+  messages.append(datum);
 }
 
 void displayData() {
