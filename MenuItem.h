@@ -1,23 +1,17 @@
-#ifndef MenuItem_h
-#define MenuItem_h
+// #ifndef MenuItem_h
+// #define MenuItem_h
 
-#include <Arduino.h>
+// #include <Arduino.h>
+// #include "CircularBuffer.h"
 
-class MenuItem
-{
-public:
-  MenuItem(long *options, int optionCount, String prefix = "");
+// class MenuItem
+// {
+// public:
+// template<typename T, int N>
+//   MenuItem(const CircularBuffer<T, N>& buffer);
 
-  long getValue();
-  void cycle();
+// private:
+//   const CircularBuffer<T, N>& _buffer;
+// };
 
-  String getText();
-
-private:
-  long *_options;
-  int _selectedIndex;
-  int _optionCount;
-  String _prefix;
-};
-
-#endif
+// #endif
