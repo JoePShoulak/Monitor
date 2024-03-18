@@ -68,7 +68,7 @@ public:
   }
 
   //Get a reference to the item at the current index
-  TYPE& current() const {
+  TYPE& current() {
     return data[counter];
   }
 
