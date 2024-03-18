@@ -28,8 +28,13 @@ CircularBuffer<String, 6> messages;
 EvtManager mgr(true);  // true to manage memory
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 
+bool selectButtonAction() {
+  // TODO: implement
+  return true;
+}
+
 bool cycleButtonAction() {
-  // TODO: This should change which menu item is selected, not just cyclke the baudrate
+  // TODO: This should change which menu item is selected, not just cycle the baudrate
   menuBaudRate.cycle();
   Serial.end();
   Serial.begin(menuBaudRate.getValue());
@@ -38,6 +43,7 @@ bool cycleButtonAction() {
   return true;
 }
 
+EvtPinListener selectButtonListener(SELECT_BTN, 100, (EvtAction)selectButtonAction);
 EvtPinListener cycleButtonListener(CYCLE_BTN, 100, (EvtAction)cycleButtonAction);
 
 void displaySettings() {
@@ -85,6 +91,7 @@ void setup() {
   pinMode(SELECT_BTN, INPUT);
   pinMode(CYCLE_BTN, INPUT);
 
+  mgr.addListener(&selectButtonListener);
   mgr.addListener(&cycleButtonListener);
 
   Serial.begin(menuBaudRate.getValue());
