@@ -27,6 +27,9 @@ bool selectButtonAction() {
 bool cycleButtonAction() {
   String selection = menuItem.current();
 
+  if (selection == "NONE")
+    return true;
+
   if (selection == "BR") {
     baudRate.next();
     // TODO: Change the serial port
