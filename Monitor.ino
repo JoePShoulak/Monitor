@@ -75,6 +75,16 @@ void drawMenu() {
   display.drawString(0, 1, "----------------");
 }
 
+void displayData() {
+  display.setCursor(0, 12);
+
+  int i = 2;
+
+  for (auto& msg : messages) {
+    display.drawString(0, i++, msg.c_str());
+  }
+}
+
 void setup() {
   display.begin();
   display.setPowerSave(0);
@@ -112,5 +122,6 @@ void loop() {
 
   if (Serial.available()) {
     addData(Serial.readString());
+    displayData();
   }
 }
