@@ -16,8 +16,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 #define DEFAULT_BAUDRATE 9600
 #define DEFAULT_MODE monitor
 
-#define BUTTON1_PIN 11
-#define BUTTON2_PIN 12
+#define SELECT_BTN 12
+#define CYCLE_BTN 11
 
 enum Mode {
   monitor,
@@ -81,14 +81,14 @@ void update() {
 
 void setup() {
   // Button test, pay no mind
-  pinMode(BUTTON1_PIN, INPUT);
-  pinMode(BUTTON2_PIN, INPUT);
+  pinMode(SELECT_BTN, INPUT);
+  pinMode(CYCLE_BTN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(baudRate);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println("OLED init failed");
+    Serial.println("Screen init failed");
     while (true)
       ;
   }
@@ -107,7 +107,11 @@ void loop() {
   }
 
   // Button test, pay no mind
-  bool b1 = digitalRead(BUTTON1_PIN);
-  bool b2 = digitalRead(BUTTON2_PIN);
+  bool b1 = digitalRead(SELECT_BTN);
+  bool b2 = digitalRead(CYCLE_BTN);
   digitalWrite(LED_BUILTIN, b1 ^ b2);
+
+  if (digitalRead(SELECT_BTN) == HIGH) {
+    Serial.println("1 pressed");
+  }
 }
