@@ -5,8 +5,9 @@
  */
 template<typename TYPE, int LEN>
 class CircularBuffer {
-  TYPE data[LEN];
-  int counter = 0;
+  TYPE data[LEN]; //The data to store
+  int counter = 0; //The current index. This will always be between 0 and LEN.
+  int total = 0; //The total number of items in the buffer. This will never exceed LEN.
 
 public:
   const int length = LEN;
@@ -48,7 +49,7 @@ public:
     return data[index % LEN];
   }
 
-  //Get a reference to an element from the buffer. This is used when we ARE not modifying it.
+  //Get a reference to an element from the buffer. This is used when we ARE modifying it.
   //The compiler knows the difference and will use this function only when needed.
   TYPE& operator[](const int index) {
     return data[index % LEN];
@@ -58,6 +59,7 @@ public:
   void append(const TYPE value) {
     data[counter] = value;
     counter = (counter + 1) % LEN;
+    if (total < LEN) ++total;
   }
 
   //Get the current index. Will always be a value from 0 to the length of the buffer
@@ -65,17 +67,29 @@ public:
     return counter;
   }
 
-  void up() {
+  //Get a reference to the item at the current index
+  TYPE& current() const {
+    return data[counter];
+  }
+
+  //Get the total number of items in the buffer
+  int count() const {
+    return total;
+  }
+
+  //Move to the previous spot in the buffer
+  void prev() {
     counter = (counter + LEN - 1) % LEN;
   }
 
-  void down() {
+  //Move to the next spot in the buffer
+  void next() {
     counter = (counter + 1) % LEN;
   }
 
   //Helper method for C++ range based for loops
   iterator begin() const {
-    return iterator(data, counter + LEN);
+    return iterator(data, counter + LEN + LEN - total);
   }
 
   //Helper method for C++ range based for loops
