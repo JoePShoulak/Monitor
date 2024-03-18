@@ -5,9 +5,9 @@
  */
 template<typename TYPE, int LEN>
 class CircularBuffer {
-  TYPE data[LEN]; //The data to store
-  int counter = 0; //The current index. This will always be between 0 and LEN.
-  int total = 0; //The total number of items in the buffer. This will never exceed LEN.
+  TYPE data[LEN];   //The data to store
+  int counter = 0;  //The current index. This will always be between 0 and LEN.
+  int total = 0;    //The total number of items in the buffer. This will never exceed LEN.
 
 public:
   const int length = LEN;
@@ -18,7 +18,8 @@ public:
     int offset;
 
   public:
-    iterator(const TYPE* buffer, int index) : ptr(buffer), offset(index) {}
+    iterator(const TYPE* buffer, int index)
+      : ptr(buffer), offset(index) {}
 
     iterator operator++() {
       ++offset;
@@ -95,5 +96,10 @@ public:
   //Helper method for C++ range based for loops
   iterator end() const {
     return iterator(data, counter + LEN + LEN);
+  }
+
+  void populate(TYPE* arr) {
+    for (int i = 0; i < length; i++)
+      this->append(arr[i]);
   }
 };

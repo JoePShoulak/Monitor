@@ -36,13 +36,10 @@ bool cycleButtonAction() {
 
   if (selection == "BAUDRATE") {
     baudRate.next();
-    // TODO: Change the serial port
   } else if (selection == "MODE") {
     mode.next();
-    // TODO: Change the mode}
   } else if (selection == "CHANNEL") {
     channel.next();
-    // TODO: Change the channel
   }
 
   drawMenu();
@@ -95,17 +92,10 @@ void setup() {
   evtMgr.addListener(&selectButtonListener);
   evtMgr.addListener(&cycleButtonListener);
 
-  for (int i = 0; i < baudRate.length; i++)
-    baudRate.append(baudRateOptions[i]);
-
-  for (int i = 0; i < mode.length; i++)
-    mode.append(modeOptions[i]);
-
-  for (int i = 0; i < channel.length; i++)
-    channel.append(channelOptions[i]);
-
-  for (int i = 0; i < menuItem.length; i++)
-    menuItem.append(menuItemOptions[i]);
+  baudRate.populate(baudRateOptions);
+  mode.populate(modeOptions);
+  channel.populate(channelOptions);
+  menuItem.populate(menuItemOptions);
 
   Serial.begin(baudRate.current());
 
