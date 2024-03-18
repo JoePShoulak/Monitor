@@ -15,7 +15,7 @@ long MenuItem::getValue()
 
 String MenuItem::getText()
 {
-  return _prefix + this->getValue() + " ";
+  return _prefix + this->getValue();
 }
 
 void MenuItem::cycle()
