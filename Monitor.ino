@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Eventually.h>
 
 // Custom Libs
 #include <MenuItem.h>
@@ -28,6 +29,7 @@ enum Mode {
 int baudRate = DEFAULT_BAUDRATE;
 Mode mode = DEFAULT_MODE;
 CircularBuffer<String, 7> messages;
+EvtManager mgr(true);  // true to manage memory
 
 long baudRateOptions[] = { 9600, 115200 };
 MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
@@ -79,11 +81,14 @@ void update() {
   display.display();
 }
 
+bool cycleBaud() {
+  menuBaudRate.cycle();
+  update();
+}
+
 void setup() {
-  // Button test, pay no mind
   pinMode(SELECT_BTN, INPUT);
   pinMode(CYCLE_BTN, INPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(baudRate);
 
@@ -95,23 +100,16 @@ void setup() {
 
   display.setTextColor(SSD1306_WHITE);
 
-  // menuBaudRate.cycle();
-  // menuBaudRate.cycle();
   update();
+
+  mgr.addListener(new EvtPinListener(CYCLE_BTN, 100, (EvtAction)cycleBaud));
 }
 
 void loop() {
+  mgr.loopIteration();
+  
   if (Serial.available()) {
     addData(Serial.readString());
     update();
-  }
-
-  // Button test, pay no mind
-  bool b1 = digitalRead(SELECT_BTN);
-  bool b2 = digitalRead(CYCLE_BTN);
-  digitalWrite(LED_BUILTIN, b1 ^ b2);
-
-  if (digitalRead(SELECT_BTN) == HIGH) {
-    Serial.println("1 pressed");
   }
 }
