@@ -9,8 +9,8 @@
 #define SCREEN_HEIGHT 64
 #define SCREEN_RESET -1
 #define SCREEN_ADDRESS 0x3C
-#define DEFAULT_BAUDRATE 9600
 #define DEFAULT_MODE monitor
+#define DEFAULT_CHANNEL 256
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
@@ -20,7 +20,6 @@ enum Mode {
   recieve
 };
 
-int baudRate = DEFAULT_BAUDRATE;
 long baudRateOptions[] = { 9600, 115200 };
 MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
 
@@ -28,6 +27,15 @@ Mode mode = DEFAULT_MODE;
 CircularBuffer<String, 6> messages;
 EvtManager mgr(true);  // true to manage memory
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
+
+bool cycleButtonAction() {
+  menuBaudRate.cycle();
+  updateDisplay();
+
+  return true;
+}
+
+EvtPinListener cycleButtonListener(CYCLE_BTN, 100, (EvtAction)cycleButtonAction);
 
 void displaySettings() {
   display.setCursor(0, 0);
@@ -43,7 +51,9 @@ void displaySettings() {
   else
    display.print("ERR ");
 
-  display.print("CH:1");
+  display.print("CH:");
+  display.print(DEFAULT_CHANNEL);
+  display.print(" ");
 
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
 }
@@ -68,18 +78,13 @@ void updateDisplay() {
   display.display();
 }
 
-bool cycleBaud() {
-  menuBaudRate.cycle();
-  updateDisplay();
-}
-
 void setup() {
   pinMode(SELECT_BTN, INPUT);
   pinMode(CYCLE_BTN, INPUT);
 
-  mgr.addListener(new EvtPinListener(CYCLE_BTN, 100, (EvtAction)cycleBaud));
+  mgr.addListener(&cycleButtonListener);
 
-  Serial.begin(baudRate);
+  Serial.begin(menuBaudRate.getValue());
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println("Screen init failed");
