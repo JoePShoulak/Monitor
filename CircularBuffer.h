@@ -98,6 +98,7 @@ public:
     return iterator(data, counter + LEN + LEN);
   }
 
+  // Fill the buffer with the contents of an array of the same size
   void populate(TYPE* arr) {
     for (int i = 0; i < length; i++)
       this->append(arr[i]);
