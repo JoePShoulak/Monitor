@@ -13,7 +13,7 @@
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
-int channel = DEFAULT_CHANNEL;
+int channel = DEFAULT_CHANNEL; // 1-125
 EvtManager mgr(true);  // true to manage memory
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
@@ -58,7 +58,6 @@ void displaySettings() {
   y = display.getCursorY();
   display.print(bR);
   display.print(" ");
-
 
   display.getTextBounds(bR, x, y, &oX, &oY, &w, &h);
 
