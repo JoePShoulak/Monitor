@@ -2,7 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Eventually.h>
-#include <MenuItem.h>
+#include "MenuItem.h"
 #include "CircularBuffer.h"
 
 #define SCREEN_WIDTH 128
@@ -29,7 +29,10 @@ EvtManager mgr(true);  // true to manage memory
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 
 bool cycleButtonAction() {
+  // TODO: This should change which menu item is selected, not just cyclke the baudrate
   menuBaudRate.cycle();
+  Serial.end();
+  Serial.begin(menuBaudRate.getValue());
   updateDisplay();
 
   return true;
