@@ -13,14 +13,15 @@
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
-int channel = DEFAULT_CHANNEL; // 1-125
-EvtManager mgr(true);  // true to manage memory
+int channel = DEFAULT_CHANNEL;  // 1-125
+EvtManager mgr(true);           // true to manage memory
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 
 CircularBuffer<long, 2> baudRates;
 CircularBuffer<String, 6> messages;
 CircularBuffer<String, 3> modes;
+// CircularBuffer<String, 3> menuItems;
 
 bool selectButtonAction() {
   // TODO: implement
@@ -60,6 +61,7 @@ void displaySettings() {
   display.print(" ");
 
   display.getTextBounds(bR, x, y, &oX, &oY, &w, &h);
+  display.drawFastHLine(x, 8, w, SSD1306_WHITE);
 
   if (modes.current() == "monitor")
     display.print("MON");
@@ -75,7 +77,6 @@ void displaySettings() {
   display.print(channel);
   display.print(" ");
 
-  display.drawFastHLine(x, 8, w, SSD1306_WHITE);
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
 }
 
@@ -100,26 +101,34 @@ void updateDisplay() {
 }
 
 void setup() {
-  pinMode(SELECT_BTN, INPUT);
-  pinMode(CYCLE_BTN, INPUT);
-
-  baudRates.append(9600);
-  baudRates.append(115200);
-  
-  modes.append("monitor");
-  modes.append("transmit");
-  modes.append("recieve");
-
-  mgr.addListener(&selectButtonListener);
-  mgr.addListener(&cycleButtonListener);
-
-  Serial.begin(baudRates.current());
-
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println("Screen init failed");
     while (true)
       ;
   }
+
+  pinMode(SELECT_BTN, INPUT);
+  pinMode(CYCLE_BTN, INPUT);
+  mgr.addListener(&selectButtonListener);
+  mgr.addListener(&cycleButtonListener);
+
+  baudRates.append(9600);
+  baudRates.append(115200);
+
+  Serial.begin(9600);
+  Serial.println(baudRates.current());
+
+  modes.append("monitor");
+  modes.append("transmit");
+  modes.append("recieve");
+
+  Serial.println(modes.current());
+
+  // menuItems.append("baudRate");
+  // menuItems.append("mode");
+  // menuItems.append("channel");
+
+  // Serial.println(menuItems.current());
 
   display.setTextColor(SSD1306_WHITE);
   updateDisplay();
