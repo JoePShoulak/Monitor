@@ -1,10 +1,7 @@
-// Default Libs
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Eventually.h>
-
-// Custom Libs
 #include <MenuItem.h>
 #include "CircularBuffer.h"
 
@@ -12,11 +9,8 @@
 #define SCREEN_HEIGHT 64
 #define SCREEN_RESET -1
 #define SCREEN_ADDRESS 0x3C
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
-
 #define DEFAULT_BAUDRATE 9600
 #define DEFAULT_MODE monitor
-
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
@@ -27,34 +21,29 @@ enum Mode {
 };
 
 int baudRate = DEFAULT_BAUDRATE;
-Mode mode = DEFAULT_MODE;
-CircularBuffer<String, 7> messages;
-EvtManager mgr(true);  // true to manage memory
-
 long baudRateOptions[] = { 9600, 115200 };
 MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
+
+Mode mode = DEFAULT_MODE;
+CircularBuffer<String, 6> messages;
+EvtManager mgr(true);  // true to manage memory
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 
 void displaySettings() {
   display.setCursor(0, 0);
 
-  // BaudRate
   display.print(menuBaudRate.getText());
 
-  // Mode
-  switch (mode) {
-    case monitor:
-      display.print("MON ");
-      break;
-    case transmit:
-      display.print("TX  ");
-      break;
-    case recieve:
-      display.print("RX  ");
-      break;
-    default:
-      display.print("ERR ");
-      break;
-  }
+  if (mode == monitor)
+   display.print("MON ");
+  else if (mode == transmit)
+   display.print("TX  ");
+  else if (mode == recieve)
+   display.print("RX  ");
+  else
+   display.print("ERR ");
+
+  display.print("CH:1");
 
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
 }
@@ -72,23 +61,23 @@ void displayData() {
   }
 }
 
-void update() {
+void updateDisplay() {
   display.clearDisplay();
-
   displaySettings();
   displayData();
-
   display.display();
 }
 
 bool cycleBaud() {
   menuBaudRate.cycle();
-  update();
+  updateDisplay();
 }
 
 void setup() {
   pinMode(SELECT_BTN, INPUT);
   pinMode(CYCLE_BTN, INPUT);
+
+  mgr.addListener(new EvtPinListener(CYCLE_BTN, 100, (EvtAction)cycleBaud));
 
   Serial.begin(baudRate);
 
@@ -99,17 +88,14 @@ void setup() {
   }
 
   display.setTextColor(SSD1306_WHITE);
-
-  update();
-
-  mgr.addListener(new EvtPinListener(CYCLE_BTN, 100, (EvtAction)cycleBaud));
+  updateDisplay();
 }
 
 void loop() {
   mgr.loopIteration();
-  
+
   if (Serial.available()) {
     addData(Serial.readString());
-    update();
+    updateDisplay();
   }
 }
