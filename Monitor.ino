@@ -23,6 +23,7 @@ enum Mode {
 long baudRateOptions[] = { 9600, 115200 };
 MenuItem menuBaudRate(baudRateOptions, 2, "BR:");
 
+int channel = DEFAULT_CHANNEL;
 Mode mode = DEFAULT_MODE;
 CircularBuffer<String, 6> messages;
 EvtManager mgr(true);  // true to manage memory
@@ -61,7 +62,7 @@ void displaySettings() {
    display.print("ERR ");
 
   display.print("CH:");
-  display.print(DEFAULT_CHANNEL);
+  display.print(channel);
   display.print(" ");
 
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);

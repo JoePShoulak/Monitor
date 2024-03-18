@@ -3,10 +3,6 @@
 
 #include <Arduino.h>
 
-/*
-  MenuItem
-*/
-
 class MenuItem
 {
 public:
