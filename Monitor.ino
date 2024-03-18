@@ -9,25 +9,18 @@
 #define SCREEN_HEIGHT 64
 #define SCREEN_RESET -1
 #define SCREEN_ADDRESS 0x3C
-#define DEFAULT_MODE monitor
 #define DEFAULT_CHANNEL 256
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
-enum Mode {
-  monitor,
-  transmit,
-  recieve
-};
-
 int channel = DEFAULT_CHANNEL;
-Mode mode = DEFAULT_MODE;
-CircularBuffer<String, 6> messages;
 EvtManager mgr(true);  // true to manage memory
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
 
 CircularBuffer<long, 2> baudRates;
+CircularBuffer<String, 6> messages;
+CircularBuffer<String, 3> modes;
 
 bool selectButtonAction() {
   // TODO: implement
@@ -48,37 +41,42 @@ EvtPinListener selectButtonListener(SELECT_BTN, 100, (EvtAction)selectButtonActi
 EvtPinListener cycleButtonListener(CYCLE_BTN, 100, (EvtAction)cycleButtonAction);
 
 void displaySettings() {
-  display.setCursor(0, 0);
-
-  String bR = "BR:" + String(baudRates.current());
-
-  display.print(bR);
-  display.print(" ");
-
   int x;
   int y;
+
+  int oX;
+  int oY;
 
   unsigned int h;
   unsigned int w;
 
-  display.getTextBounds(bR, 0, 0, &x, &y, &w, &h);
+  display.setCursor(0, 0);
 
-  if (mode == monitor)
+  display.print("BR:");
+  String bR = String(baudRates.current());
+  x = display.getCursorX();
+  y = display.getCursorY();
+  display.print(bR);
+  display.print(" ");
+
+
+  display.getTextBounds(bR, x, y, &oX, &oY, &w, &h);
+
+  if (modes.current() == "monitor")
     display.print("MON");
-  else if (mode == transmit)
+  else if (modes.current() == "transmit")
     display.print("TX");
-  else if (mode == recieve)
+  else if (modes.current() == "recieve")
     display.print("RX");
   else
     display.print("ERR");
 
   display.print(" ");
 
-  display.print("CH:");
   display.print(channel);
   display.print(" ");
 
-  display.drawFastHLine(0, 8, w, SSD1306_WHITE);
+  display.drawFastHLine(x, 8, w, SSD1306_WHITE);
   display.drawFastHLine(0, 10, SCREEN_WIDTH, SSD1306_WHITE);
 }
 
@@ -108,6 +106,10 @@ void setup() {
 
   baudRates.append(9600);
   baudRates.append(115200);
+  
+  modes.append("monitor");
+  modes.append("transmit");
+  modes.append("recieve");
 
   mgr.addListener(&selectButtonListener);
   mgr.addListener(&cycleButtonListener);
