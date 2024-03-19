@@ -38,9 +38,12 @@ public:
   //Default constructor, don't initialize data.
   CircularBuffer() {}
 
-  // Auto populate with an array
-  CircularBuffer(TYPE *arr) {
-    this->populate(arr);
+  //Initialize the buffer with the contents of an array.
+  //This allows for brace-enclosed initialization e.g.
+  //CircularBuffer<int, 3> buffer = {1, 2, 3};
+  template<typename... ARGS>
+  CircularBuffer(const ARGS&... args) {
+    this->populate(args...);
   }
 
   //Initialize data to a specific value, e.g. 0
@@ -103,9 +106,16 @@ public:
     return iterator(data, counter + LEN + LEN);
   }
 
-  // Fill the buffer with the contents of an array of the same size
-  void populate(TYPE* arr) {
-    for (int i = 0; i < length; i++)
-      this->append(arr[i]);
+  //Fill the buffer with the contents of an array.
+  //This allows for brace-enclosed initialization e.g.
+  //CircularBuffer<int, 3> buffer = {1, 2, 3};
+  template<typename... ARGS>
+  void populate(const TYPE& first, const ARGS&... args) {
+    append(first);
+    populate(args...);
+  }
+
+  void populate(const TYPE& arg) {
+    append(arg);
   }
 };

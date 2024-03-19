@@ -7,16 +7,11 @@
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
 
-String menuItemOptions[] = { "NONE", "BAUDRATE", "MODE", "CHANNEL" };
-long baudRateOptions[] = { 9600, 115200 };
-String modeOptions[] = { "MN", "TX", "RX" };
-int channelOptions[] = { 1, 2, 3 };
-
 CircularBuffer<String, 6> messages;
-CircularBuffer<String, 4> menuItem(menuItemOptions);
-CircularBuffer<long, 2> baudRate(baudRateOptions);
-CircularBuffer<String, 3> mode(modeOptions);
-CircularBuffer<int, 3> channel(channelOptions);
+CircularBuffer<String, 4> menuItem = { "NONE", "BAUDRATE", "MODE"};
+CircularBuffer<long, 2> baudRate = { 9600, 115200 };
+CircularBuffer<String, 3> mode = { "MN", "TX", "RX" };
+CircularBuffer<int, 3> channel = { 1, 2, 3 };
 
 EvtManager evtMgr(true);  // true to manage memory
 U8X8_SSD1306_128X64_NONAME_HW_I2C display(U8X8_PIN_NONE);
