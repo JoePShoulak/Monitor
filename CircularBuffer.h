@@ -38,6 +38,11 @@ public:
   //Default constructor, don't initialize data.
   CircularBuffer() {}
 
+  // Auto populate with an array
+  CircularBuffer(TYPE *arr) {
+    this->populate(arr);
+  }
+
   //Initialize data to a specific value, e.g. 0
   CircularBuffer(TYPE default_value) {
     for (int i = 0; i < LEN; ++i) {
