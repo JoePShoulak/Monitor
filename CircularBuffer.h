@@ -1,3 +1,6 @@
+#ifndef CircularBuffer_h
+#define CircularBuffer_h
+
 /**
  * A circular buffer of fixed size.
  * Appending can be done indefinitely,
@@ -119,3 +122,5 @@ public:
     append(arg);
   }
 };
+
+#endif
