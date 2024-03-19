@@ -7,10 +7,10 @@
 #define CYCLE_BTN 11
 
 CircularBuffer<String, 6> messages;
-CircularBuffer<String, 4> menuItemBuffer = { "NONE", "BAUDRATE", "MODE"};
-CircularBuffer<long, 2> baudRateBuffer = { 9600, 115200 };
+CircularBuffer<String, 4> menuItemBuffer = { "NONE", "BAUDRATE", "MODE", "CHANNEL"};
+CircularBuffer<long, 3> baudRateBuffer = { 9600, 115200, 2000000 };
 CircularBuffer<String, 3> modeBuffer = { "MN", "TX", "RX" };
-CircularBuffer<int, 3> channelBuffer = { 1, 2, 3 };
+CircularBuffer<int, 4> channelBuffer = { 1, 2, 3, 125 };
 
 EvtManager evtMgr(true);  // true to manage memory
 U8X8_SSD1306_128X64_NONAME_HW_I2C display(U8X8_PIN_NONE);
