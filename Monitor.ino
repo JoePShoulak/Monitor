@@ -2,7 +2,6 @@
 #include <Eventually.h>
 #include <U8x8lib.h>
 #include "CircularBuffer.h"
-// #include "MenuItem.h"
 
 #define SELECT_BTN 12
 #define CYCLE_BTN 11
