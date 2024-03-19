@@ -13,33 +13,33 @@ String modeOptions[] = { "MN", "TX", "RX" };
 int channelOptions[] = { 1, 2, 3 };
 
 CircularBuffer<String, 6> messages;
-CircularBuffer<String, 4> menuItem(menuItemOptions);
-CircularBuffer<long, 2> baudRate(baudRateOptions);
-CircularBuffer<String, 3> mode(modeOptions);
-CircularBuffer<int, 3> channel(channelOptions);
+CircularBuffer<String, 4> menuItemBuffer(menuItemOptions);
+CircularBuffer<long, 2> baudRateBuffer(baudRateOptions);
+CircularBuffer<String, 3> modeBuffer(modeOptions);
+CircularBuffer<int, 3> channelBuffer(channelOptions);
 
 EvtManager evtMgr(true);  // true to manage memory
 U8X8_SSD1306_128X64_NONAME_HW_I2C display(U8X8_PIN_NONE);
 
 bool selectButtonAction() {
-  menuItem.next();
+  menuItemBuffer.next();
   drawMenu();
 
   return true;
 }
 
 bool cycleButtonAction() {
-  String selection = menuItem.current();
+  String selection = menuItemBuffer.current();
 
   if (selection == "NONE")
     return true;
 
   if (selection == "BAUDRATE") {
-    baudRate.next();
+    baudRateBuffer.next();
   } else if (selection == "MODE") {
-    mode.next();
+    modeBuffer.next();
   } else if (selection == "CHANNEL") {
-    channel.next();
+    channelBuffer.next();
   }
 
   drawMenu();
@@ -62,7 +62,7 @@ void updateMonitor(String datum) {
 
 template<typename T, int N>
 void printMenuItem(int x, const CircularBuffer<T, N>& buffer, String name, String prefix = "") {
-  display.setInverseFont(menuItem.current() == name);
+  display.setInverseFont(menuItemBuffer.current() == name);
 
   if (prefix)
     display.drawString(x++, 0, prefix.c_str());
@@ -73,9 +73,9 @@ void printMenuItem(int x, const CircularBuffer<T, N>& buffer, String name, Strin
 void drawMenu() {
   display.drawString(0, 0, "                ");
 
-  printMenuItem(0, baudRate, "BAUDRATE", "B");
-  printMenuItem(8, mode, "MODE");
-  printMenuItem(12, channel, "CHANNEL", "C");
+  printMenuItem(0, baudRateBuffer, "BAUDRATE", "B");
+  printMenuItem(8, modeBuffer, "MODE");
+  printMenuItem(12, channelBuffer, "CHANNEL", "C");
 
   display.setInverseFont(0);
   display.drawString(0, 1, "----------------");
@@ -92,7 +92,7 @@ void setup() {
   evtMgr.addListener(&selectButtonListener);
   evtMgr.addListener(&cycleButtonListener);
 
-  Serial.begin(baudRate.current());
+  Serial.begin(baudRateBuffer.current());
 
   drawMenu();
 }
